@@ -164,51 +164,42 @@ function renderSVGOverlay() {
     // ---- 象限文字群組 ----
     const tg = svgEl('g', { 'pointer-events': 'none', 'data-qlabel': qId });
 
-    // 象限名稱
+    // 主要標籤：顯示天數資訊
+    let mainLabel;
+    if (count === 0) {
+      mainLabel = '推薦';
+    } else if (lastDays === 0) {
+      mainLabel = '今天';
+    } else {
+      mainLabel = `${lastDays}天前`;
+    }
+
     tg.appendChild(svgEl('text', {
       x: lp.x, y: lp.y,
-      'font-size': '15',
+      'font-size': '30',
       'font-weight': '700',
       fill: '#fff',
       'text-anchor': 'middle',
       'paint-order': 'stroke',
-      stroke: 'rgba(0,0,0,0.25)',
-      'stroke-width': '3.5',
+      stroke: 'rgba(0,0,0,0.3)',
+      'stroke-width': '5',
       'stroke-linejoin': 'round',
-    }, label));
+    }, mainLabel));
 
-    // 狀態文字 (X天前 · N次)
-    if (count > 0) {
-      let statusText = lastDays === 0 ? '今天' : `${lastDays}天前`;
-      if (count > 1) statusText += ` · ${count}次`;
+    // 次數文字
+    if (count > 1) {
       tg.appendChild(svgEl('text', {
-        x: lp.x, y: lp.y + 16,
-        'font-size': '11',
+        x: lp.x, y: lp.y + 26,
+        'font-size': '18',
         'font-weight': '600',
-        fill: '#fff',
+        fill: 'rgba(255,255,255,0.85)',
         'text-anchor': 'middle',
         'paint-order': 'stroke',
         stroke: 'rgba(0,0,0,0.2)',
-        'stroke-width': '3',
+        'stroke-width': '3.5',
         'stroke-linejoin': 'round',
-      }, statusText));
+      }, `共 ${count} 次`));
     }
-
-    // Hover 提示 (初始隱藏)
-    const hintY = count > 0 ? lp.y + 32 : lp.y + 16;
-    tg.appendChild(svgEl('text', {
-      x: lp.x, y: hintY,
-      'font-size': '12',
-      'font-weight': '600',
-      fill: 'rgba(255,255,255,0.95)',
-      'text-anchor': 'middle',
-      display: 'none',
-      'data-hint': qId,
-      'paint-order': 'stroke',
-      stroke: 'rgba(0,0,0,0.15)',
-      'stroke-width': '3',
-      'stroke-linejoin': 'round',
-    }, '👆 點擊記錄'));
 
     svg.appendChild(tg);
   });
@@ -245,29 +236,52 @@ function renderSVGOverlay() {
     stroke: 'rgba(180,50,50,0.4)', 'stroke-width': 1.5, 'pointer-events': 'none',
   }));
 
-  // ---- 左右手標籤 ----
-  const leftHand = mirrored ? '右手 ✋' : '✋ 左手';
-  const rightHand = mirrored ? '左手 🤚' : '🤚 右手';
+  // ---- 左右手標籤 (放在小熊兩側空白處) ----
+  const leftLabel = mirrored ? '右手' : '左手';
+  const rightLabel = mirrored ? '左手' : '右手';
+  const sideY = bcy - bry * 0.15;  // 略高於中心
 
-  svg.appendChild(svgEl('text', {
-    x: bcx - brx - 18, y: bcy,
-    'font-size': '14',
-    'font-weight': '600',
-    fill: 'rgba(100,85,65,0.55)',
-    'text-anchor': 'end',
+  // 左側標籤
+  const lgLeft = svgEl('g', { 'pointer-events': 'none' });
+  lgLeft.appendChild(svgEl('text', {
+    x: VB_W * 0.12, y: sideY,
+    'font-size': '26',
+    'font-weight': '700',
+    fill: 'var(--text-primary, #4a3f35)',
+    'text-anchor': 'middle',
     'dominant-baseline': 'middle',
-    'pointer-events': 'none',
-  }, leftHand));
+    opacity: '0.7',
+  }, '✋'));
+  lgLeft.appendChild(svgEl('text', {
+    x: VB_W * 0.12, y: sideY + 24,
+    'font-size': '16',
+    'font-weight': '700',
+    fill: 'var(--text-primary, #4a3f35)',
+    'text-anchor': 'middle',
+    opacity: '0.65',
+  }, leftLabel));
+  svg.appendChild(lgLeft);
 
-  svg.appendChild(svgEl('text', {
-    x: bcx + brx + 18, y: bcy,
-    'font-size': '14',
-    'font-weight': '600',
-    fill: 'rgba(100,85,65,0.55)',
-    'text-anchor': 'start',
+  // 右側標籤
+  const lgRight = svgEl('g', { 'pointer-events': 'none' });
+  lgRight.appendChild(svgEl('text', {
+    x: VB_W * 0.88, y: sideY,
+    'font-size': '26',
+    'font-weight': '700',
+    fill: 'var(--text-primary, #4a3f35)',
+    'text-anchor': 'middle',
     'dominant-baseline': 'middle',
-    'pointer-events': 'none',
-  }, rightHand));
+    opacity: '0.7',
+  }, '🤚'));
+  lgRight.appendChild(svgEl('text', {
+    x: VB_W * 0.88, y: sideY + 24,
+    'font-size': '16',
+    'font-weight': '700',
+    fill: 'var(--text-primary, #4a3f35)',
+    'text-anchor': 'middle',
+    opacity: '0.65',
+  }, rightLabel));
+  svg.appendChild(lgRight);
 
   // ---- 外框橢圓 (裝飾用) ----
   svg.appendChild(svgEl('ellipse', {
@@ -282,19 +296,16 @@ function renderSVGOverlay() {
 // ---- Quadrant hover (不重繪) ----
 function onQHover(qId, enter) {
   const path = els.svg.querySelector(`[data-q="${qId}"]`);
-  const hint = els.svg.querySelector(`[data-hint="${qId}"]`);
   if (!path) return;
 
   if (enter) {
     path.setAttribute('fill-opacity', '0.72');
     path.setAttribute('stroke', 'rgba(255,255,255,0.7)');
     path.setAttribute('stroke-width', '2.5');
-    if (hint) hint.setAttribute('display', 'block');
   } else {
     path.setAttribute('fill-opacity', '0.55');
     path.removeAttribute('stroke');
     path.removeAttribute('stroke-width');
-    if (hint) hint.setAttribute('display', 'none');
   }
 }
 
