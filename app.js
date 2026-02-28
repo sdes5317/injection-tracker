@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalWarning: $('#modal-warning'),
     inputDatetime: $('#input-datetime'),
     inputDose: $('#input-dose'),
+    inputWeight: $('#input-weight'),
     inputNotes: $('#input-notes'),
     deleteOverlay: $('#delete-overlay'),
     exportBtn: $('#export-btn'),
@@ -361,6 +362,7 @@ function renderHistory() {
     const qLabel = Q_LABELS[getInjQ(inj)] || '?';
     const dateStr = formatDate(inj.date);
     const daysText = days === 0 ? '今天' : `${days} 天前`;
+    const weightText = inj.weight ? ` · ${inj.weight} kg` : '';
     const notesText = inj.notes ? ` · ${inj.notes}` : '';
 
     const item = document.createElement('div');
@@ -373,7 +375,7 @@ function renderHistory() {
           <span class="history-quadrant">${qLabel}</span>
           <span class="history-dose">${inj.dose} mg</span>
         </div>
-        <div class="history-sub">${daysText}${notesText}</div>
+        <div class="history-sub">${daysText}${weightText}${notesText}</div>
       </div>
       <button class="history-delete" data-id="${inj.id}" title="刪除">&times;</button>
     `;
@@ -452,12 +454,15 @@ function openModal(qId) {
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   els.inputDatetime.value = now.toISOString().slice(0, 16);
 
-  // 保留上次劑量
+  // 保留上次劑量與體重
   if (state.injections.length > 0) {
     const sorted = [...state.injections].sort(
       (a, b) => new Date(b.date) - new Date(a.date)
     );
     els.inputDose.value = sorted[0].dose;
+    els.inputWeight.value = sorted[0].weight || '';
+  } else {
+    els.inputWeight.value = '';
   }
 
   els.inputNotes.value = '';
@@ -483,11 +488,13 @@ function closeModal() {
 function onSaveInjection() {
   if (!pendingQuadrant) return;
 
+  const weightVal = els.inputWeight.value.trim();
   const injection = {
     id: generateId(),
     quadrant: pendingQuadrant,
     dose: els.inputDose.value,
     date: els.inputDatetime.value,
+    weight: weightVal ? parseFloat(weightVal) : null,
     notes: els.inputNotes.value.trim(),
   };
 
