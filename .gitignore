@@ -1,0 +1,6 @@
+# VS Code
+.vscode/launch.json
+
+# Claude
+.claude/settings.local.json
+.claude/launch.json

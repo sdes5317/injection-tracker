@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Mounjaro 腹部注射追蹤器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧸</text></svg>">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Mounjaro 腹部注射追蹤器</h1>
+      <p class="subtitle">點擊肚子記錄注射位置</p>
+    </header>
+
+    <!-- Stats Bar -->
+    <div id="stats-bar">
+      <div class="stat-item">
+        <span class="stat-label">距上次注射</span>
+        <span class="stat-value" id="days-since">--</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">下次建議</span>
+        <span class="stat-value" id="next-suggestion">--</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">總注射次數</span>
+        <span class="stat-value" id="total-count">0</span>
+      </div>
+    </div>
+
+    <!-- Tracker Diagram -->
+    <div id="tracker-container">
+      <img id="teddy-img" src="image/teddy.png" alt="Teddy Bear" draggable="false">
+      <canvas id="heatmap-canvas"></canvas>
+      <svg id="overlay-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <!-- Legend -->
+    <div id="legend">
+      <div class="legend-item"><span class="legend-dot" style="background:#5a9e6f"></span>推薦注射</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#d4b86a"></span>尚可</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#d4956a"></span>注意</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#c75c5c"></span>避免</div>
+      <div class="legend-item"><span class="legend-dot legend-dot-exclusion"></span>禁區</div>
+    </div>
+
+    <!-- Injection History -->
+    <div id="history-section">
+      <h2>注射記錄</h2>
+      <div id="history-list">
+        <p class="empty-msg" id="empty-msg">尚無注射記錄，點擊肚子開始記錄</p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div id="actions">
+      <button id="export-btn" class="btn btn-secondary">匯出 JSON</button>
+      <button id="import-btn" class="btn btn-secondary">匯入 JSON</button>
+      <input type="file" id="import-file" accept=".json" hidden>
+      <button id="clear-btn" class="btn btn-danger">清除全部</button>
+    </div>
+
+    <footer>
+      <p>資料儲存於瀏覽器 localStorage，請定期匯出備份</p>
+    </footer>
+  </div>
+
+  <!-- Modal: New Injection -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div id="modal" class="modal">
+      <h3>新增注射記錄</h3>
+      <div class="modal-info" id="modal-quadrant-info"></div>
+
+      <div class="form-group">
+        <label for="input-datetime">日期與時間</label>
+        <input type="datetime-local" id="input-datetime" class="form-input">
+      </div>
+
+      <div class="form-group">
+        <label for="input-dose">劑量 (mg)</label>
+        <select id="input-dose" class="form-input">
+          <option value="2.5">2.5 mg</option>
+          <option value="5">5 mg</option>
+          <option value="7.5">7.5 mg</option>
+          <option value="10">10 mg</option>
+          <option value="12.5">12.5 mg</option>
+          <option value="15">15 mg</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="input-notes">備註（選填）</label>
+        <input type="text" id="input-notes" class="form-input" placeholder="例如：左側偏上方">
+      </div>
+
+      <div class="modal-warning hidden" id="modal-warning"></div>
+
+      <div class="modal-actions">
+        <button id="modal-save" class="btn btn-primary">儲存</button>
+        <button id="modal-cancel" class="btn btn-ghost">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Confirm Delete -->
+  <div id="delete-overlay" class="modal-overlay hidden">
+    <div class="modal modal-sm">
+      <h3>確認刪除</h3>
+      <p>確定要刪除這筆注射記錄嗎？</p>
+      <div class="modal-actions">
+        <button id="delete-confirm" class="btn btn-danger">刪除</button>
+        <button id="delete-cancel" class="btn btn-ghost">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
