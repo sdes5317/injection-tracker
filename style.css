@@ -200,6 +200,21 @@ header .subtitle {
   color: var(--text-primary);
 }
 
+#history-list {
+  max-height: 240px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#history-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+#history-list::-webkit-scrollbar-thumb {
+  background: var(--card-border);
+  border-radius: 2px;
+}
+
 .empty-msg {
   text-align: center;
   color: var(--text-muted);
