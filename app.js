@@ -237,28 +237,6 @@ function renderSVGOverlay() {
   svg.appendChild(svgEl('line', { x1: bcx - brx, y1: bcy, x2: bcx + brx, y2: bcy, ...dashStyle }));
   svg.appendChild(svgEl('line', { x1: bcx, y1: bcy - bry, x2: bcx, y2: bcy + bry, ...dashStyle }));
 
-  // ---- 禁區 ----
-  const avgR = (brx + bry) / 2;
-  const exR = avgR * CONFIG.exclusionRatio;
-  svg.appendChild(svgEl('circle', {
-    cx: bcx, cy: bcy, r: exR,
-    fill: 'rgba(180,50,50,0.15)',
-    stroke: 'rgba(180,50,50,0.5)',
-    'stroke-width': 1.2,
-    'stroke-dasharray': '4 3',
-    'pointer-events': 'none',
-  }));
-  // X 標記
-  const xs = exR * 0.35;
-  svg.appendChild(svgEl('line', {
-    x1: bcx - xs, y1: bcy - xs, x2: bcx + xs, y2: bcy + xs,
-    stroke: 'rgba(180,50,50,0.4)', 'stroke-width': 1.5, 'pointer-events': 'none',
-  }));
-  svg.appendChild(svgEl('line', {
-    x1: bcx + xs, y1: bcy - xs, x2: bcx - xs, y2: bcy + xs,
-    stroke: 'rgba(180,50,50,0.4)', 'stroke-width': 1.5, 'pointer-events': 'none',
-  }));
-
   // ---- 左右手標籤 (放在小熊兩側空白處) ----
   const leftLabel = mirrored ? '右手' : '左手';
   const rightLabel = mirrored ? '左手' : '右手';
@@ -312,6 +290,51 @@ function renderSVGOverlay() {
     fill: 'none',
     stroke: 'rgba(100,85,65,0.15)',
     'stroke-width': 1.5,
+    'pointer-events': 'none',
+  }));
+
+  // ---- 禁區 (最上層，紅白警示帶) ----
+  const avgR = (brx + bry) / 2;
+  const exR = avgR * CONFIG.exclusionRatio;
+
+  // SVG <defs> 定義紅白斜條紋 pattern
+  const defs = svgEl('defs', {});
+  const patId = 'hazard-stripes';
+  const pat = svgEl('pattern', {
+    id: patId,
+    width: '12', height: '12',
+    patternUnits: 'userSpaceOnUse',
+    patternTransform: 'rotate(45)',
+  });
+  pat.appendChild(svgEl('rect', { width: '12', height: '12', fill: 'rgba(255,255,255,0.85)' }));
+  pat.appendChild(svgEl('rect', { width: '6', height: '12', fill: 'rgba(200,50,50,0.75)' }));
+  defs.appendChild(pat);
+  svg.appendChild(defs);
+
+  // 禁區圓底 (紅白條紋填充)
+  svg.appendChild(svgEl('circle', {
+    cx: bcx, cy: bcy, r: exR,
+    fill: `url(#${patId})`,
+    'pointer-events': 'none',
+  }));
+  // 外框紅色粗環
+  svg.appendChild(svgEl('circle', {
+    cx: bcx, cy: bcy, r: exR,
+    fill: 'none',
+    stroke: 'rgba(190,45,45,0.8)',
+    'stroke-width': '2.5',
+    'pointer-events': 'none',
+  }));
+  // X 標記
+  const xs = exR * 0.38;
+  svg.appendChild(svgEl('line', {
+    x1: bcx - xs, y1: bcy - xs, x2: bcx + xs, y2: bcy + xs,
+    stroke: 'rgba(190,45,45,0.85)', 'stroke-width': '2.5', 'stroke-linecap': 'round',
+    'pointer-events': 'none',
+  }));
+  svg.appendChild(svgEl('line', {
+    x1: bcx + xs, y1: bcy - xs, x2: bcx - xs, y2: bcy + xs,
+    stroke: 'rgba(190,45,45,0.85)', 'stroke-width': '2.5', 'stroke-linecap': 'round',
     'pointer-events': 'none',
   }));
 }
