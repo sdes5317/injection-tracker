@@ -14,10 +14,10 @@
   --text-muted: #b0a696;
   --accent: #c6905a;
   --accent-hover: #b07d4a;
-  --green: #5a9e6f;
-  --yellow: #d4b86a;
-  --orange: #d4956a;
-  --red: #c75c5c;
+  --green: #3a8a52;
+  --yellow: #b8a030;
+  --orange: #c07030;
+  --red: #b84040;
   --shadow: rgba(139, 126, 111, 0.1);
   --radius: 12px;
   --radius-sm: 8px;
@@ -94,12 +94,11 @@ header .subtitle {
 /* ============ Tracker Container ============ */
 #tracker-container {
   position: relative;
-  margin: 12px 0;
+  margin: 12px 0 8px;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 2px 12px var(--shadow);
   background: #f5f0e8;
-  cursor: crosshair;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -112,15 +111,6 @@ header .subtitle {
   pointer-events: none;
 }
 
-#heatmap-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
 #overlay-svg {
   position: absolute;
   top: 0;
@@ -129,13 +119,44 @@ header .subtitle {
   height: 100%;
 }
 
+/* ============ Toolbar ============ */
+#toolbar {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 8px;
+}
+
+.btn-mirror {
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+  padding: 5px 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn-mirror:hover {
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+.btn-mirror.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
 /* ============ Legend ============ */
 #legend {
   display: flex;
   justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin: 8px 0 16px;
+  margin: 4px 0 16px;
 }
 
 .legend-item {
@@ -323,7 +344,7 @@ header .subtitle {
 }
 
 .btn-danger:hover {
-  background: #b04e4e;
+  background: #963535;
 }
 
 /* ============ Modal ============ */
@@ -417,8 +438,8 @@ header .subtitle {
 .modal-warning {
   font-size: 0.8rem;
   color: var(--red);
-  background: rgba(199, 92, 92, 0.08);
-  border: 1px solid rgba(199, 92, 92, 0.2);
+  background: rgba(184, 64, 64, 0.08);
+  border: 1px solid rgba(184, 64, 64, 0.2);
   border-radius: var(--radius-sm);
   padding: 8px 10px;
   margin-bottom: 12px;
@@ -447,13 +468,6 @@ footer {
 footer p {
   font-size: 0.72rem;
   color: var(--text-muted);
-}
-
-/* ============ SVG Dot Styles (via JS) ============ */
-/* Pulse animation for recommended zone indicator */
-@keyframes pulse-ring {
-  0% { opacity: 0.6; r: 8; }
-  100% { opacity: 0; r: 20; }
 }
 
 /* ============ Responsive ============ */

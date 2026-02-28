@@ -13,7 +13,7 @@
   <div id="app">
     <header>
       <h1>Mounjaro 腹部注射追蹤器</h1>
-      <p class="subtitle">點擊肚子記錄注射位置</p>
+      <p class="subtitle">點擊區塊記錄注射位置</p>
     </header>
 
     <!-- Stats Bar -->
@@ -35,16 +35,19 @@
     <!-- Tracker Diagram -->
     <div id="tracker-container">
       <img id="teddy-img" src="image/teddy.png" alt="Teddy Bear" draggable="false">
-      <canvas id="heatmap-canvas"></canvas>
       <svg id="overlay-svg" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
 
-    <!-- Legend -->
+    <!-- Mirror Toggle + Legend -->
+    <div id="toolbar">
+      <button id="mirror-btn" class="btn btn-mirror" title="切換左右手方向">🔄 鏡像翻轉</button>
+    </div>
+
     <div id="legend">
-      <div class="legend-item"><span class="legend-dot" style="background:#5a9e6f"></span>推薦注射</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#d4b86a"></span>尚可</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#d4956a"></span>注意</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#c75c5c"></span>避免</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#3a8a52"></span>推薦</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#b8a030"></span>尚可</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#c07030"></span>注意</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#b84040"></span>避免</div>
       <div class="legend-item"><span class="legend-dot legend-dot-exclusion"></span>禁區</div>
     </div>
 
@@ -94,7 +97,7 @@
 
       <div class="form-group">
         <label for="input-notes">備註（選填）</label>
-        <input type="text" id="input-notes" class="form-input" placeholder="例如：左側偏上方">
+        <input type="text" id="input-notes" class="form-input" placeholder="例如：偏上方一點">
       </div>
 
       <div class="modal-warning hidden" id="modal-warning"></div>
