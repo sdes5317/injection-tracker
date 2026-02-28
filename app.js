@@ -132,37 +132,41 @@ function renderSVGOverlay() {
     LR: { x: bcx + brx * 0.50, y: bcy + bry * 0.55 },
   };
 
+  // ---- 鏡像映射：畫面位置 → 資料象限 ----
+  const MIRROR_MAP = { UL: 'UR', UR: 'UL', LL: 'LR', LR: 'LL' };
+  const toDataQ = (visQ) => mirrored ? MIRROR_MAP[visQ] : visQ;
+
   // ---- 繪製四象限 ----
-  QUADRANTS.forEach(qId => {
-    const score = calcQuadrantScore(qId);
+  QUADRANTS.forEach(visQ => {
+    const dataQ = toDataQ(visQ);           // 對應的資料象限
+    const score = calcQuadrantScore(dataQ);
     const color = scoreToColor(score);
-    const lp = qLabelPos[qId];
-    const lastDays = getLastDaysInQ(qId);
-    const count = getCountInQ(qId);
-    const label = Q_LABELS[qId];
+    const lp = qLabelPos[visQ];            // 畫面位置不變
+    const lastDays = getLastDaysInQ(dataQ);
+    const count = getCountInQ(dataQ);
 
     // 底色 path
     const path = svgEl('path', {
-      d: qPaths[qId],
+      d: qPaths[visQ],                     // 畫面位置不變
       fill: color,
       'fill-opacity': '0.55',
       cursor: 'pointer',
-      'data-q': qId,
+      'data-q': visQ,
     });
 
     // Hover 效果 (直接改 attribute，不重繪)
-    path.addEventListener('mouseenter', () => onQHover(qId, true));
-    path.addEventListener('mouseleave', () => onQHover(qId, false));
-    path.addEventListener('click', () => onQuadrantClick(qId));
+    path.addEventListener('mouseenter', () => onQHover(visQ, true));
+    path.addEventListener('mouseleave', () => onQHover(visQ, false));
+    path.addEventListener('click', () => onQuadrantClick(dataQ));
     path.addEventListener('touchend', (e) => {
       e.preventDefault();
-      onQuadrantClick(qId);
+      onQuadrantClick(dataQ);
     });
 
     svg.appendChild(path);
 
     // ---- 象限文字群組 ----
-    const tg = svgEl('g', { 'pointer-events': 'none', 'data-qlabel': qId });
+    const tg = svgEl('g', { 'pointer-events': 'none', 'data-qlabel': visQ });
 
     // 主要標籤：顯示天數資訊
     let mainLabel;
