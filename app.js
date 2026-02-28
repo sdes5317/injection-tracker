@@ -56,6 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
     importFile: $('#import-file'),
     clearBtn: $('#clear-btn'),
     mirrorBtn: $('#mirror-btn'),
+    syncCopyBtn: $('#sync-copy-btn'),
+    syncPasteBtn: $('#sync-paste-btn'),
+    syncOverlay: $('#sync-overlay'),
+    syncInput: $('#sync-input'),
+    syncImportBtn: $('#sync-import-btn'),
+    syncCancelBtn: $('#sync-cancel-btn'),
   };
 
   loadState();
@@ -96,6 +102,18 @@ function bindEvents() {
   els.importBtn.addEventListener('click', () => els.importFile.click());
   els.importFile.addEventListener('change', onImportFile);
   els.clearBtn.addEventListener('click', onClearAll);
+
+  els.syncCopyBtn.addEventListener('click', onSyncCopy);
+  els.syncPasteBtn.addEventListener('click', () => {
+    els.syncInput.value = '';
+    els.syncOverlay.classList.remove('hidden');
+    els.syncInput.focus();
+  });
+  els.syncImportBtn.addEventListener('click', onSyncImport);
+  els.syncCancelBtn.addEventListener('click', () => els.syncOverlay.classList.add('hidden'));
+  els.syncOverlay.addEventListener('click', (e) => {
+    if (e.target === els.syncOverlay) els.syncOverlay.classList.add('hidden');
+  });
   els.mirrorBtn.addEventListener('click', toggleMirror);
 }
 
@@ -593,6 +611,71 @@ function onClearAll() {
   state.injections = [];
   saveState();
   render();
+}
+
+// ============================================================
+// Sync (同步碼)
+// ============================================================
+function encodeSync(data) {
+  const json = JSON.stringify(data);
+  return btoa(unescape(encodeURIComponent(json)));
+}
+
+function decodeSync(str) {
+  const json = decodeURIComponent(escape(atob(str.trim())));
+  return JSON.parse(json);
+}
+
+function onSyncCopy() {
+  if (state.injections.length === 0) {
+    alert('目前沒有記錄可同步');
+    return;
+  }
+
+  try {
+    const code = encodeSync(state);
+    navigator.clipboard.writeText(code).then(() => {
+      els.syncCopyBtn.textContent = '✅ 已複製！';
+      setTimeout(() => { els.syncCopyBtn.textContent = '📋 複製同步碼'; }, 2000);
+    }).catch(() => {
+      // Fallback: 用 textarea 選取
+      prompt('複製以下同步碼：', code);
+    });
+  } catch (e) {
+    alert('產生同步碼失敗');
+  }
+}
+
+function onSyncImport() {
+  const code = els.syncInput.value.trim();
+  if (!code) {
+    alert('請貼上同步碼');
+    return;
+  }
+
+  try {
+    const parsed = decodeSync(code);
+    if (!parsed || !Array.isArray(parsed.injections)) {
+      alert('同步碼格式不正確');
+      return;
+    }
+
+    const existingIds = new Set(state.injections.map(i => i.id));
+    let newCount = 0;
+    for (const inj of parsed.injections) {
+      if (!existingIds.has(inj.id)) {
+        state.injections.push(inj);
+        newCount++;
+      }
+    }
+
+    saveState();
+    render();
+    els.syncOverlay.classList.add('hidden');
+    alert(`同步完成：新增 ${newCount} 筆記錄（共 ${state.injections.length} 筆）`);
+  } catch (e) {
+    alert('同步碼無效，請確認是否完整貼上');
+  }
 }
 
 // ============================================================

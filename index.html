@@ -59,6 +59,14 @@
       </div>
     </div>
 
+    <!-- Sync -->
+    <div id="sync-section">
+      <div id="sync-actions">
+        <button id="sync-copy-btn" class="btn btn-primary">📋 複製同步碼</button>
+        <button id="sync-paste-btn" class="btn btn-secondary">📲 貼上同步碼</button>
+      </div>
+    </div>
+
     <!-- Actions -->
     <div id="actions">
       <button id="export-btn" class="btn btn-secondary">匯出 JSON</button>
@@ -70,6 +78,21 @@
     <footer>
       <p>資料儲存於瀏覽器 localStorage，請定期匯出備份</p>
     </footer>
+  </div>
+
+  <!-- Modal: Sync Paste -->
+  <div id="sync-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <h3>貼上同步碼</h3>
+      <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:12px;">將從其他裝置複製的同步碼貼在下方</p>
+      <div class="form-group">
+        <textarea id="sync-input" class="form-input" rows="4" placeholder="在此貼上同步碼..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button id="sync-import-btn" class="btn btn-primary">匯入</button>
+        <button id="sync-cancel-btn" class="btn btn-ghost">取消</button>
+      </div>
+    </div>
   </div>
 
   <!-- Modal: New Injection -->

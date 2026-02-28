@@ -299,6 +299,28 @@ header .subtitle {
   background: rgba(199, 92, 92, 0.08);
 }
 
+/* ============ Sync Section ============ */
+#sync-section {
+  margin-bottom: 12px;
+}
+
+#sync-actions {
+  display: flex;
+  gap: 8px;
+}
+
+#sync-actions .btn {
+  flex: 1;
+}
+
+textarea.form-input {
+  resize: vertical;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
 /* ============ Actions ============ */
 #actions {
   display: flex;
