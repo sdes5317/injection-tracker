@@ -245,20 +245,20 @@ function renderSVGOverlay() {
   const lgLeft = svgEl('g', { 'pointer-events': 'none' });
   lgLeft.appendChild(svgEl('text', {
     x: VB_W * 0.12, y: sideY,
-    'font-size': '26',
+    'font-size': '48',
     'font-weight': '700',
     fill: 'var(--text-primary, #4a3f35)',
     'text-anchor': 'middle',
     'dominant-baseline': 'middle',
-    opacity: '0.7',
+    opacity: '0.75',
   }, '✋'));
   lgLeft.appendChild(svgEl('text', {
-    x: VB_W * 0.12, y: sideY + 24,
-    'font-size': '16',
+    x: VB_W * 0.12, y: sideY + 48,
+    'font-size': '36',
     'font-weight': '700',
     fill: 'var(--text-primary, #4a3f35)',
     'text-anchor': 'middle',
-    opacity: '0.65',
+    opacity: '0.7',
   }, leftLabel));
   svg.appendChild(lgLeft);
 
@@ -266,20 +266,20 @@ function renderSVGOverlay() {
   const lgRight = svgEl('g', { 'pointer-events': 'none' });
   lgRight.appendChild(svgEl('text', {
     x: VB_W * 0.88, y: sideY,
-    'font-size': '26',
+    'font-size': '48',
     'font-weight': '700',
     fill: 'var(--text-primary, #4a3f35)',
     'text-anchor': 'middle',
     'dominant-baseline': 'middle',
-    opacity: '0.7',
+    opacity: '0.75',
   }, '🤚'));
   lgRight.appendChild(svgEl('text', {
-    x: VB_W * 0.88, y: sideY + 24,
-    'font-size': '16',
+    x: VB_W * 0.88, y: sideY + 48,
+    'font-size': '36',
     'font-weight': '700',
     fill: 'var(--text-primary, #4a3f35)',
     'text-anchor': 'middle',
-    opacity: '0.65',
+    opacity: '0.7',
   }, rightLabel));
   svg.appendChild(lgRight);
 
